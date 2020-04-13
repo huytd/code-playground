@@ -1,0 +1,152 @@
+<html>
+
+<head>
+  <script src="lib/codemirror.min.js"></script>
+  <link rel="stylesheet" href="lib/codemirror.css"/>
+  <link rel="stylesheet" href="lib/material-darker.css">
+  <script src="lib/clike.js"></script>
+  <script src="lib/sublime.js"></script>
+  <style>
+    html {
+      box-sizing: border-box;
+    }
+
+    *, ::before, ::after {
+      box-sizing: inherit;
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: #282828;
+      color: #ccc;
+    }
+
+    .CodeMirror {
+      width: 100%; height: 100%;
+      font-family: Monaco, 'Lucida Console', monospace;
+      font-size: 12.5px;
+    }
+
+    .container {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+
+    #editor {
+      flex: 1;
+    }
+
+    #output {
+      width: 35%;
+      font-family: Monaco, 'Lucida Console', monospace;
+      font-size: 12.5px;
+      margin: 0; padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #output textarea {
+      outline: none;
+      resize: none;
+      background-color: #222;
+      color: #FFF;
+      border: none;
+      padding: 10px;
+      height: 100px;
+      width: 100%;
+      margin: 5px 0;
+    }
+
+    #stdout {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+      padding: 10px;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    #stderr {
+      padding: 10px;
+      height: 100%;
+      width: 100%;
+      color: #f07178;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    details summary {
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div id="editor"></div>
+    <div id="output">
+      <details id="stdindetails">
+        <summary>Standard Input</summary>
+        <textarea id="stdin"></textarea>
+      </details>
+      <details open="true">
+        <summary>Standard Output</summary>
+        <pre id="stdout"></pre>
+      </details>
+      <details open="true">
+        <summary>Standard Error</summary>
+        <pre id="stderr"></pre>
+      </details>
+    </div>
+  </div>
+  <script>
+    const savedStdin = window.localStorage.getItem('__cpppad-saved-stdin');
+    if (savedStdin) {
+      document.querySelector("#stdin").value = savedStdin;
+      document.querySelector("#stdindetails").setAttribute('open', true);
+    }
+
+    const cm = CodeMirror(document.querySelector("#editor"), {
+      value: window.localStorage.getItem('__cpppad-saved-code') || '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello World";\n}',
+      mode: 'clike',
+      lineNumbers: true,
+      keyMap: 'sublime',
+      theme: 'material-darker'
+    });
+
+    const executeCode = (editor) => {
+      document.querySelector("#stdout").innerHTML = "Running...";
+      document.querySelector("#stderr").innerHTML = "";
+      const code = editor.getValue();
+      const stdin = document.querySelector("#stdin").value;
+      window.localStorage.setItem('__cpppad-saved-code', code);
+      window.localStorage.setItem('__cpppad-saved-stdin', stdin);
+      fetch('/execute', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stdin: stdin,
+          code: code
+        })
+      })
+      .then(r => r.json())
+      .then(output => {
+        document.querySelector("#stdout").innerHTML = output.stdout;
+        document.querySelector("#stderr").innerHTML = output.stderr;
+      });
+    };
+
+    const customKey = {
+      "Cmd-Enter": executeCode,
+      "Ctrl-Enter": executeCode
+    };
+
+    cm.addKeyMap(customKey);
+  </script>
+</body>
+
+</html>

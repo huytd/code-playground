@@ -1,0 +1,16 @@
+An online code playground with stdin/stdout/stderr support.
+
+To run locally:
+
+> node index.js
+
+To deploy it online (it's recommended to use Heroku), you
+should build a Docker image for it:
+
+> docker build -t <your-name>/<project-name> .
+> heroku container:login
+> heroku create <app-name>
+> heroku container:push web --app <app-name>
+> heroku container:release web --app <app-name>
+
+This application is published under BSD-3-Clause license.
