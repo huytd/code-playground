@@ -104,6 +104,13 @@
       background-repeat: no-repeat;
       background-position: center right;
     }
+
+    #extra-flags {
+      background: #333;
+      border: 1px solid #555;
+      color: #dddddd;
+      padding: 3px 30px 3px 5px;
+    }
   </style>
 </head>
 
@@ -112,8 +119,8 @@
     language: <select id="language-select">
       <option value="cpp">C++</option>
       <option value="python">Python</option>
-      <option value="rust">Rust</option>
     </select>
+    additional compile flags: <input type="text" id="extra-flags"/>
   </div>
   <div class="container">
     <div id="editor"></div>
@@ -146,7 +153,6 @@
     const defaultCode = {
       'cpp': '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello World";\n}',
       'python': '',
-      'rust': 'fn main() {\n  println!("Hello World!");\n}'
     };
 
     const initLanguage = lang => {
@@ -159,6 +165,8 @@
       }
       const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + lang) || defaultCode[lang];
       cm.setValue(savedCode);
+      const savedFlags = window.localStorage.getItem('__cpppad-saved-flags-' + lang) || '';
+      document.querySelector('#extra-flags').value = savedFlags;
     };
 
     initLanguage(language);
@@ -174,8 +182,10 @@
       document.querySelector("#stderr").innerHTML = "";
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;
+      const flags = document.querySelector("#extra-flags").value;
       window.localStorage.setItem('__cpppad-saved-code-' + language, code);
       window.localStorage.setItem('__cpppad-saved-stdin-' + language, stdin);
+      window.localStorage.setItem('__cpppad-saved-flags-' + language, flags);
       fetch('/execute', {
         method: 'POST',
         headers: {
@@ -184,6 +194,7 @@
         body: JSON.stringify({
           stdin: stdin,
           code: code,
+          flags: flags,
           lang: language
         })
       })

@@ -15,19 +15,16 @@ app.post('/execute', (req, res) => {
   const code = req.body.code;
   const stdin = req.body.stdin;
   const lang = req.body.lang;
+  const flags = req.body.flags;
   let cmd = '';
   switch (lang) {
     case 'cpp':
       fs.writeFileSync(root + '/main.cpp', code);
-      cmd += 'g++ main.cpp -std=c++11 -o maincpp && ' + (stdin.length ? ' cat stdin.inp | ./maincpp' : './maincpp');
+      cmd += 'g++ main.cpp -std=c++11 -o maincpp ' + flags + ' && ' + (stdin.length ? ' cat stdin.inp | ./maincpp' : './maincpp');
       break;
     case 'python':
       fs.writeFileSync(root + '/main.py', code);
       cmd += stdin.length ? 'cat stdin.inp | python main.py' : 'python main.py';
-      break;
-    case 'rust':
-      fs.writeFileSync(root + '/main.rs', code);
-      cmd += 'rustc main.rs -o mainrs && ' + (stdin.length ? 'cat stdin.inp | ./mainrs' : './mainrs');
       break;
     default:
       break;
