@@ -11,7 +11,7 @@ app.use(bodyParser());
 app.use(express.static('public'));
 
 app.post('/execute', (req, res) => {
-  const root = "/playground";
+  const root = process.env.NODE_ENV !== "production" ? "." : "/playground";
   const code = req.body.code;
   const stdin = req.body.stdin;
   const lang = req.body.lang;

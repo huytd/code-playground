@@ -48,39 +48,87 @@
       width: 35%;
       font-family: Monaco, 'Lucida Console', monospace;
       font-size: 12.5px;
-      margin: 0; padding: 10px;
+      margin: 0; padding: 0;
       display: flex;
       flex-direction: column;
     }
 
-    #output textarea {
-      outline: none;
-      resize: none;
-      background-color: #222;
-      color: #FFF;
-      border: none;
-      padding: 10px;
-      height: 100px;
-      width: 100%;
-      margin: 5px 0;
+    #output .output-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #222;
+      margin: 0 0 3px 3px;
+      padding: 5px;
     }
 
-    #stdout {
+    #output .output-section.doubly {
+      flex-direction: row;
+    }
+
+    #output .output-section.doubly .group {
       flex: 1;
-      height: 100%;
-      width: 100%;
-      padding: 10px;
-      overflow-x: auto;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #output .output-section.doubly .group:last-child {
+      border-left: 3px solid #282828;
+      padding-left: 5px;
+    }
+
+    #output .output-section header {
+      font-variant: small-caps;
+      font-weight: bold;
+      color: #666;
+    }
+
+    #output .output-section textarea {
+      flex: 1;
+      padding: 5px 0;
+      outline: none;
+      resize: none;
+      background: none;
+      border: none;
+      color: #FFF;
+    }
+
+    #output .output-section pre {
+      flex: 1;
+      padding: 5px 0;
+      overflow: auto;
+    }
+
+    #output .status-section {
+      color: #666;
+      background: #222;
+      margin: 0 0 3px 3px;
+      padding: 5px;
+    }
+
+    #output .status-section .icon {
+      text-transform: lowercase;
+      font-variant: normal;
+      background-color: #666;
+      color: #222;
+      border-radius: 50%;
+      font-size: 0.7em;
+      text-align: center;
+      width: 12.5px; height: 12.5px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    #output .status-section .icon.success {
+      background-color: #C3E88D;
+    }
+
+    #output .status-section .icon.failed {
+      background-color: #f07178;
     }
 
     #stderr {
-      padding: 10px;
-      height: 100%;
-      width: 100%;
       color: #f07178;
-      overflow-x: auto;
-      overflow-y: auto;
     }
 
     details summary {
@@ -125,18 +173,25 @@
   <div class="container">
     <div id="editor"></div>
     <div id="output">
-      <details id="stdindetails">
-        <summary>Standard Input</summary>
-        <textarea id="stdin"></textarea>
-      </details>
-      <details open="true">
-        <summary>Standard Output</summary>
+      <div class="output-section doubly">
+        <div class="group">
+          <header>stdin</header>
+          <textarea id="stdin"></textarea>
+        </div>
+        <div class="group">
+          <header>expected stdout</header>
+          <textarea id="expected-stdout"></textarea>
+        </div>
+      </div>
+      <div class="output-section">
+        <header>stdout</header>
         <pre id="stdout"></pre>
-      </details>
-      <details open="true">
-        <summary>Standard Error</summary>
+      </div>
+      <div class="output-section">
+        <header>stderr</header>
         <pre id="stderr"></pre>
-      </details>
+      </div>
+      <div id="status" class="status-section"><span class="icon">i</span> press ⌘ + enter or ^ + enter to execute</div>
     </div>
   </div>
   <script>
@@ -161,12 +216,13 @@
       const savedStdin = window.localStorage.getItem('__cpppad-saved-stdin-' + lang);
       if (savedStdin) {
         document.querySelector("#stdin").value = savedStdin;
-        document.querySelector("#stdindetails").setAttribute('open', true);
       }
       const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + lang) || defaultCode[lang];
       cm.setValue(savedCode);
       const savedFlags = window.localStorage.getItem('__cpppad-saved-flags-' + lang) || '';
       document.querySelector('#extra-flags').value = savedFlags;
+      const expectedOutput = window.localStorage.getItem('__cpppad-saved-expected-' + lang) || '';
+      document.querySelector('#expected-stdout').value = expectedOutput;
     };
 
     initLanguage(language);
@@ -177,15 +233,35 @@
       initLanguage($languageSelect.value);
     };
 
+    const htmlEntities = (str) => {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    };
+
+    const testOutput = () => {
+      const expected = document.querySelector("#expected-stdout").value;
+      if (expected.length) {
+        const actual = document.querySelector("#stdout").innerHTML;
+        if (expected === actual) {
+          document.querySelector("#status").innerHTML = "<span style='color: #C3E88D;'><span class='icon success'>✔</span> test passed!</span>";
+        } else {
+          document.querySelector("#status").innerHTML = "<span style='color: #f07178;'><span class='icon failed'>!</span> test failed! stdout does not matched expected output.</span>";
+        }
+      } else {
+        document.querySelector("#status").innerHTML = "<span class='icon'>i</span> press ⌘ + enter or ^ + enter to execute";
+      }
+    };
+
     const executeCode = (editor) => {
-      document.querySelector("#stdout").innerHTML = "Running...";
+      document.querySelector("#status").innerHTML = "<span class='icon'>i</span> running...";
       document.querySelector("#stderr").innerHTML = "";
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;
       const flags = document.querySelector("#extra-flags").value;
+      const expected = document.querySelector("#expected-stdout").value;
       window.localStorage.setItem('__cpppad-saved-code-' + language, code);
       window.localStorage.setItem('__cpppad-saved-stdin-' + language, stdin);
       window.localStorage.setItem('__cpppad-saved-flags-' + language, flags);
+      window.localStorage.setItem('__cpppad-saved-expected-' + language, expected);
       fetch('/execute', {
         method: 'POST',
         headers: {
@@ -200,8 +276,9 @@
       })
       .then(r => r.json())
       .then(output => {
-        document.querySelector("#stdout").innerHTML = output.stdout;
-        document.querySelector("#stderr").innerHTML = output.stderr;
+        document.querySelector("#stdout").innerHTML = htmlEntities(output.stdout);
+        document.querySelector("#stderr").innerHTML = htmlEntities(output.stderr);
+        testOutput();
       });
     };
 
