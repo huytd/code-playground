@@ -13,4 +13,10 @@ should build a Docker image for it:
 > heroku container:push web --app <app-name>
 > heroku container:release web --app <app-name>
 
+In case you don't want to build Docker locally, you can do it on Heroku
+with the help of heroku.yml:
+
+> heroku create <app-name>
+> heroku stack:set container
+
 This application is published under BSD-3-Clause license.
