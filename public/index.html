@@ -41,8 +41,9 @@
       flex-direction: row;
     }
 
-    #editor {
+    #editor-container {
       flex: 1;
+      overflow: auto;
     }
 
     #output {
@@ -172,7 +173,9 @@
     additional compile flags: <input type="text" id="extra-flags"/>
   </div>
   <div class="container">
-    <div id="editor"></div>
+    <div id="editor-container">
+      <div id="editor"></div>
+    </div>
     <div id="output">
       <div class="output-section doubly">
         <div class="group">
