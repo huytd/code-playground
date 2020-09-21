@@ -9,6 +9,7 @@ RUN apt-get update; \
     libcurl4-gnutls-dev; \
     mkdir -p /playground;
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN source $HOME/.cargo/env
 RUN rustup install stable \
     rustup default stable
 WORKDIR /
