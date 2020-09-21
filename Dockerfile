@@ -8,8 +8,8 @@ RUN apt-get update; \
     libc6-dev \
     libcurl4-gnutls-dev; \
     mkdir -p /playground;
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
-    rustup install stable \
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN rustup install stable \
     rustup default stable
 WORKDIR /
 COPY package*.json ./
