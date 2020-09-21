@@ -30,6 +30,10 @@ app.post('/execute', (req, res) => {
       fs.writeFileSync(root + '/main.js', code);
       cmd += stdin.length ? 'cat stdin.inp | node main.js' : 'node main.js';
       break;
+    case 'rust':
+      fs.writeFileSync(root + '/main.rs', code);
+      cmd += stdin.length ? 'cat stdin.inp | rustc main.rs' : 'rustc main.rs';
+      break;
     default:
       break;
   }
