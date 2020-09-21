@@ -12,6 +12,7 @@ app.use(express.static('public'));
 
 app.post('/execute', (req, res) => {
   const root = process.env.NODE_ENV === "production" ? "/playground" : "./";
+  const execRoot = process.env.NODE_ENV === "production" ? "/root" : "~";
   const code = req.body.code;
   const stdin = req.body.stdin;
   const lang = req.body.lang;
@@ -32,7 +33,7 @@ app.post('/execute', (req, res) => {
       break;
     case 'rust':
       fs.writeFileSync(root + '/main.rs', code);
-      cmd += '~/.cargo/bin/rustc main.rs && ';
+      cmd += execRoot + '/.cargo/bin/rustc main.rs && ';
       cmd += stdin.length ? 'cat stdin.inp | ./main' : './main';
       break;
     default:
@@ -44,7 +45,7 @@ app.post('/execute', (req, res) => {
   });
 });
 
-const startupCommand = '/root/.cargo/bin/rustup default stable';
+const startupCommand = execRoot + '/.cargo/bin/rustup default stable';
 exec(startupCommand, { cwd: "/" });
 
 app.listen(process.env.PORT || 3000);
