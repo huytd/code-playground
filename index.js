@@ -32,7 +32,7 @@ app.post('/execute', (req, res) => {
       break;
     case 'rust':
       fs.writeFileSync(root + '/main.rs', code);
-      cmd += stdin.length ? 'cat stdin.inp | rustc main.rs' : 'rustc main.rs';
+      cmd += stdin.length ? 'cat stdin.inp | /root/.cargo/bin/rustc main.rs' : '/root/.cargo/bin/rustc main.rs';
       break;
     default:
       break;
