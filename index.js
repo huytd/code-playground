@@ -44,6 +44,6 @@ app.post('/execute', (req, res) => {
 });
 
 const startupCommand = '/root/.cargo/bin/rustup default stable';
-exec(startupCommand, { cwd: root });
+exec(startupCommand, { cwd: "/" });
 
 app.listen(process.env.PORT || 3000);
