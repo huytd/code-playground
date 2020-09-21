@@ -32,7 +32,6 @@ app.post('/execute', (req, res) => {
       break;
     case 'rust':
       fs.writeFileSync(root + '/main.rs', code);
-      cmd += '/root/.cargo/bin/rustup default stable && ';
       cmd += stdin.length ? 'cat stdin.inp | /root/.cargo/bin/rustc main.rs' : '/root/.cargo/bin/rustc main.rs';
       break;
     default:
@@ -43,5 +42,8 @@ app.post('/execute', (req, res) => {
     res.json({ err, stdout, stderr });
   });
 });
+
+const startupCommand = '/root/.cargo/bin/rustup default stable';
+exec(startupCommand, { cwd: root });
 
 app.listen(process.env.PORT || 3000);
