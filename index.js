@@ -26,6 +26,10 @@ app.post('/execute', (req, res) => {
       fs.writeFileSync(root + '/main.py', code);
       cmd += stdin.length ? 'cat stdin.inp | python main.py' : 'python main.py';
       break;
+    case 'node':
+      fs.writeFileSync(root + '/main.js', code);
+      cmd += stdin.length ? 'cat stdin.inp | node main.js' : 'node main.js';
+      break;
     default:
       break;
   }
