@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 
 const root = process.env.NODE_ENV === "production" ? "/playground" : "./";
-const execRoot = process.env.NODE_ENV === "production" ? "/root" : "~";
+const execRoot = "/root";
 
 app.use(timeout('60s'));
 app.use(bodyParser());
@@ -46,7 +46,7 @@ app.post('/execute', (req, res) => {
   });
 });
 
-const startupCommand = execRoot + '/.cargo/bin/rustup default stable';
+const startupCommand = '/root/.cargo/bin/rustup default stable';
 exec(startupCommand, { cwd: "/" });
 
 app.listen(process.env.PORT || 3000);
