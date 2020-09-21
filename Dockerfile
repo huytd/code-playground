@@ -9,7 +9,6 @@ RUN apt-get update; \
     libcurl4-gnutls-dev; \
     mkdir -p /playground;
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN rustc --version
 WORKDIR /
 COPY package*.json ./
 RUN npm install
