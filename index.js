@@ -5,14 +5,15 @@ const exec = require('child_process').exec;
 const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 
+const root = process.env.NODE_ENV === "production" ? "/playground" : "./";
+const execRoot = process.env.NODE_ENV === "production" ? "/root" : "~";
+
 app.use(timeout('60s'));
 app.use(bodyParser());
 
 app.use(express.static('public'));
 
 app.post('/execute', (req, res) => {
-  const root = process.env.NODE_ENV === "production" ? "/playground" : "./";
-  const execRoot = process.env.NODE_ENV === "production" ? "/root" : "~";
   const code = req.body.code;
   const stdin = req.body.stdin;
   const lang = req.body.lang;
