@@ -7,6 +7,11 @@ const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 const Bundler = require('parcel-bundler');
 const Docker = require('dockerode');
+const exec = require('child_process').exec;
+
+const rmDir = (dir) => {
+  exec(`rm -rf ${dir}`);
+};
 
 const docker = new Docker({
   socketPath: '/var/run/docker.sock'
@@ -104,7 +109,7 @@ app.post('/execute', async (req, res) => {
       'WorkingDir': '/usr/app/src'
     });
 
-    fs.rmdirSync(`./${session}`, { recursive: true });
+    rmDir(`./${session}`);
 
     res.json(result);
   } catch(err) {
