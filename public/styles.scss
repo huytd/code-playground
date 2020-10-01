@@ -1,0 +1,158 @@
+$font-size: 15px;
+$font-family: 'SF Mono', Monaco, 'Lucida Console', monospace;
+
+html {
+  box-sizing: border-box;
+}
+
+*, ::before, ::after {
+  box-sizing: inherit;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  width: 100%; height: 100%;
+  background: #212330;
+
+  color: #626887;
+  font-family: $font-family;
+  font-size: $font-size;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#editor, #editor .CodeMirror {
+  width: 100%; height: 100%;
+  font-family: $font-family;
+  font-size: $font-size;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+#editor-container {
+  flex: 1;
+  overflow: auto;
+}
+
+#output {
+  width: 35%;
+  font-family: $font-family;
+  font-size: $font-size;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#output .output-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #292D3E;
+  margin: 0 0 3px 3px;
+  padding: 5px;
+}
+
+#output .output-section.doubly {
+  flex-direction: row;
+}
+
+#output .output-section.doubly .group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#output .output-section.doubly .group:last-child {
+  border-left: 3px solid #212330;
+  padding-left: 5px;
+}
+
+#output .output-section header {
+  font-variant: small-caps;
+  font-weight: bold;
+  color: #626887;
+}
+
+#output .output-section textarea {
+  flex: 1;
+  padding: 5px 0;
+  outline: none;
+  resize: none;
+  background: none;
+  border: none;
+  color: #FFF;
+}
+
+#output .output-section pre {
+  flex: 1;
+  padding: 5px 0;
+  overflow: auto;
+}
+
+#output .status-section {
+  color: #626887;
+  background: #292D3E;
+  margin: 0 0 3px 3px;
+  padding: 5px;
+}
+
+#output .status-section .icon {
+  text-transform: lowercase;
+  font-variant: normal;
+  background-color: #626887;
+  color: #292D3E;
+  border-radius: 50%;
+  font-size: 1.0em;
+  text-align: center;
+  width: $font-size; height: $font-size;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#output .status-section .icon.success {
+  background-color: #C3E88D;
+}
+
+#output .status-section .icon.failed {
+  background-color: #f07178;
+}
+
+#stderr {
+  color: #f07178;
+}
+
+#stdin, #stdout, #stderr {
+  font-size: $font-size;
+}
+
+details summary {
+  color: #626887;
+}
+
+.header {
+  padding: 10px 15px;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #303549;
+  border: 1px solid #2f3344;
+  color: #dddddd;
+  padding: 3px 30px 3px 5px;
+  position: relative;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAcUlEQVRIie2Puw2AMBQDHRZjnJSMAqlgWo6CIEFEIj5BNO9qy2dLhmH8B+CA9kKuBdyT8gDMQFfI+ZiZcpKm5JHkJPVnEsBLGmPmPvHFwMrhyW45pfWPJNXKE0nYSbby8Lo886TO8oKkfnki+abcMLIsXdC+QY2m3bcAAAAASUVORK5CYII=");
+  background-repeat: no-repeat;
+  background-position: center right;
+  font-size: $font-size;
+}

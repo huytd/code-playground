@@ -1,52 +1,121 @@
 const express = require('express');
 const fs = require('fs');
+const path = require('path');
+const Stream = require('stream');
 const app = express();
-const exec = require('child_process').exec;
 const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
+const Bundler = require('parcel-bundler');
+const Docker = require('dockerode');
 
-const root = process.env.NODE_ENV === "production" ? "/playground" : "./";
-const execRoot = "/root";
+const docker = new Docker({
+  socketPath: '/var/run/docker.sock'
+});
+
+const root = "playground";
 
 app.use(timeout('60s'));
 app.use(bodyParser());
 
-app.use(express.static('public'));
+const runInDocker = (docker, image, command, options) => new Promise(async (resolve, reject) => {
+  try {
+    let output = {
+      stdout: '',
+      stderr: ''
+    };
 
-app.post('/execute', (req, res) => {
-  const code = req.body.code;
-  const stdin = req.body.stdin;
-  const lang = req.body.lang;
-  const flags = req.body.flags;
+    const container = await docker.createContainer({
+      Image: image,
+      Cmd: command,
+      ...options
+    });
+
+    const stream = await container.attach({
+      stream: true,
+      stdout: true,
+      stderr: true,
+      tty: false
+    });
+
+    const stdout = new Stream.PassThrough();
+    const stderr = new Stream.PassThrough();
+    container.modem.demuxStream(stream, stdout, stderr);
+
+    stdout.on('data', (chunk) => {
+      output.stdout += chunk.toString('utf-8');
+    });
+
+    stderr.on('data', (chunk) => {
+      output.stderr += chunk.toString('utf-8');
+    });
+
+    await container.start();
+    await container.stop();
+    await container.remove();
+    resolve(output);
+  } catch(error) {
+    throw error;
+  }
+});
+
+const executeCommandBuilder = (code, stdin, lang, path) => {
   let cmd = '';
+  fs.writeFileSync(path + '/stdin.inp', stdin);
   switch (lang) {
     case 'cpp':
-      fs.writeFileSync(root + '/main.cpp', code);
-      cmd += 'g++ main.cpp -std=c++11 -o maincpp ' + flags + ' && ' + (stdin.length ? ' cat stdin.inp | ./maincpp' : './maincpp');
+      fs.writeFileSync(path + '/main.cpp', code);
+      cmd = 'g++ main.cpp -std=c++11 -o maincpp && cat stdin.inp | ./maincpp';
       break;
     case 'python':
-      fs.writeFileSync(root + '/main.py', code);
-      cmd += stdin.length ? 'cat stdin.inp | python main.py' : 'python main.py';
+      fs.writeFileSync(path + '/main.py', code);
+      cmd = 'cat stdin.inp | python main.py';
       break;
     case 'node':
-      fs.writeFileSync(root + '/main.js', code);
-      cmd += stdin.length ? 'cat stdin.inp | node main.js' : 'node main.js';
+      fs.writeFileSync(path + '/main.js', code);
+      cmd = 'cat stdin.inp | node main.js';
       break;
     case 'rust':
-      fs.writeFileSync(root + '/main.rs', code);
-      cmd += execRoot + '/.cargo/bin/rustc main.rs && ';
-      cmd += stdin.length ? 'cat stdin.inp | ./main' : './main';
+      fs.writeFileSync(path + '/main.rs', code);
+      cmd = 'rustc main.rs && cat stdin.inp | ./main';
       break;
     default:
       break;
   }
-  fs.writeFileSync(root + '/stdin.inp', stdin);
-  exec(cmd, { cwd: root }, (err, stdout, stderr) => {
-    res.json({ err, stdout, stderr });
-  });
+  return cmd;
+};
+
+app.post('/execute', async (req, res) => {
+  try {
+    const code = req.body.code;
+    const stdin = req.body.stdin;
+    const lang = req.body.lang;
+    const image = (lang === 'rust') ? 'rust' : 'node';
+
+    const session = `${root}/${Date.now().toPrecision(21)}`;
+    if (!fs.existsSync(`./${session}`)) {
+      fs.mkdirSync(`./${session}`);
+    }
+
+    let cmd = executeCommandBuilder(code, stdin, lang, `./${session}`);
+    let result = await runInDocker(docker, image, ["/bin/bash", "-c", cmd], {
+      'HostConfig': {
+        'Binds': [`${path.join(__dirname + "/" + session)}:/usr/app/src`]
+      },
+      'WorkingDir': '/usr/app/src'
+    });
+
+    fs.rmdirSync(`./${session}`, { recursive: true });
+
+    res.json(result);
+  } catch(err) {
+    console.log("ERROR", err);
+    res.json({ error: true });
+  }
 });
 
-const startupCommand = '/root/.cargo/bin/rustup default stable';
-exec(startupCommand, { cwd: "/" });
+const entryFile = './public/index.html';
+const options = {};
+const bundler = new Bundler(entryFile, options);
+app.use(bundler.middleware());
 
 app.listen(process.env.PORT || 3000);
