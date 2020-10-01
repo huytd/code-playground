@@ -130,6 +130,11 @@ html, body {
   color: #f07178;
 }
 
+#stdin, #stdout {
+  color: #daddee;
+}
+
+
 #stdin, #stdout, #stderr {
   font-size: $font-size;
 }
