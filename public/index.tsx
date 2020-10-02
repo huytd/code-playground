@@ -134,25 +134,27 @@ const App = () => {
           <div id="editor" ref={editorRef}></div>
         </div>
         <div id="output">
-          <div className="output-section doubly">
-            <div className="group">
+          <div className="col">
+            <div className="output-section">
+              <header>stdout</header>
+              <pre id="stdout"></pre>
+            </div>
+          </div>
+          <div className="col">
+            <div className="output-section">
               <header>stdin</header>
               <textarea id="stdin"></textarea>
             </div>
-            <div className="group">
+            <div className="output-section">
               <header>expected stdout</header>
               <textarea id="expected-stdout"></textarea>
             </div>
+            <div className="output-section">
+              <header>stderr</header>
+              <pre id="stderr"></pre>
+            </div>
+            <div id="status" className="status-section"><span className="icon">i</span> press ⌘ + enter or ^ + enter to execute</div>
           </div>
-          <div className="output-section">
-            <header>stdout</header>
-            <pre id="stdout"></pre>
-          </div>
-          <div className="output-section">
-            <header>stderr</header>
-            <pre id="stderr"></pre>
-          </div>
-          <div id="status" className="status-section"><span className="icon">i</span> press ⌘ + enter or ^ + enter to execute</div>
         </div>
       </div>
     </>
