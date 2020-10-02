@@ -1,0 +1,23 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            supervisorctl stop ${{ secrets.APP_NAME }}
+            cd ${{ secrets.APP_PATH }}
+            git pull
+            supervisorctl start ${{ secrets.APP_NAME }}
