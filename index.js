@@ -81,7 +81,7 @@ const executeCommandBuilder = (code, stdin, lang, path) => {
       break;
     case 'rust':
       fs.writeFileSync(path + '/main.rs', code);
-      cmd = 'rustc main.rs && cat stdin.inp | ./main';
+      cmd = 'RUST_BACKTRACE=1 rustc main.rs && cat stdin.inp | ./main';
       break;
     default:
       break;
