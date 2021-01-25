@@ -7,3 +7,5 @@ main.py
 main.rs
 maincpp
 mainrs
+.cache
+dist

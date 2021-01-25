@@ -12,9 +12,9 @@ html {
 html, body {
   margin: 0; padding: 0;
   width: 100%; height: 100%;
-  background: #212330;
+  background: #eee;
 
-  color: #626887;
+  color: #333;
   font-family: $font-family;
   font-size: $font-size;
 }
@@ -65,7 +65,7 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #292D3E;
+  background: #fefefe;
   margin: 0 0 3px 3px;
   padding: 5px;
 }
@@ -73,7 +73,7 @@ html, body {
 #output .output-section header {
   font-variant: small-caps;
   font-weight: bold;
-  color: #626887;
+  color: #333;
 }
 
 #output .output-section textarea {
@@ -93,8 +93,8 @@ html, body {
 }
 
 #output .status-section {
-  color: #626887;
-  background: #292D3E;
+  color: #333;
+  background: #eee;
   margin: 0 0 3px 3px;
   padding: 5px;
 }
@@ -102,8 +102,8 @@ html, body {
 #output .status-section .icon {
   text-transform: lowercase;
   font-variant: normal;
-  background-color: #626887;
-  color: #292D3E;
+  background-color: #333;
+  color: #eee;
   border-radius: 50%;
   font-size: 1.0em;
   text-align: center;

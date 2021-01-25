@@ -4,7 +4,7 @@ import './styles.scss';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material-palenight.css';
+import 'codemirror/theme/xq-light.css';
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
@@ -35,7 +35,7 @@ const App = () => {
       mode: 'clike',
       lineNumbers: true,
       keyMap: 'vim',
-      theme: 'material-palenight',
+      theme: 'xq-light',
       showCursorWhenSelecting: true
     });
 
