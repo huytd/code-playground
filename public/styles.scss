@@ -83,7 +83,7 @@ html, body {
   resize: none;
   background: none;
   border: none;
-  color: #FFF;
+  color: #333;
 }
 
 #output .output-section pre {
@@ -122,10 +122,19 @@ html, body {
 
 #stderr {
   color: #f07178;
+  flex-shrink: 0;
+  flex-grow: 0;
+  overflow: auto;
+}
+
+#stdout {
+  overflow: auto;
 }
 
 #stdin, #stdout, #expected-stdout {
   color: #555;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 
