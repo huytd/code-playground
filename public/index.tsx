@@ -39,6 +39,14 @@ const App = () => {
       showCursorWhenSelecting: true
     });
 
+    cm.on('cursorActivity', (editor) => {
+      const lineNum = editor.getCusor().line + 1;
+      if (editor.state.curLineNum === lineNum) return;
+      editor.state.curLineNum = lineNum;
+      editor.setOption('lineNumberFormatter', l =>
+        l === lineNum ? lineNum : Math.abs(lineNum - l));
+    });
+
     const initLanguage = lang => {
       language = lang;
       window.localStorage.setItem('__cpppad-saved-language', lang);
