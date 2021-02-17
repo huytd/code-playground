@@ -132,12 +132,16 @@ html, body {
   overflow: auto;
 }
 
+#stdout[disabled] {
+  background: #eeeeee;
+}
+
 #stdin, #stdout, #expected-stdout {
   color: #555;
 }
 
 
-#stdin, #stdout, #stderr {
+#stdin, #stdout, #stderr, #expected-stdout {
   font-size: $font-size;
 }
 
@@ -153,12 +157,12 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: #303549;
-  border: 1px solid #2f3344;
-  color: #dddddd;
+  background: #fafafa;
+  border: 1px solid #eeeeee;
+  color: #333;
   padding: 3px 30px 3px 5px;
   position: relative;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAAcUlEQVRIie2Puw2AMBQDHRZjnJSMAqlgWo6CIEFEIj5BNO9qy2dLhmH8B+CA9kKuBdyT8gDMQFfI+ZiZcpKm5JHkJPVnEsBLGmPmPvHFwMrhyW45pfWPJNXKE0nYSbby8Lo886TO8oKkfnki+abcMLIsXdC+QY2m3bcAAAAASUVORK5CYII=");
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAS0lEQVQ4jWNgGAWjYPACZgYGhh4GBoY1OHAnVA1JQIGBgeEBAwPDfzR8h4GBQZZcl6IbeoeBgUGGXMPQDb1NDcNgQJ6aho2CUYAGACiuEUHnKCPJAAAAAElFTkSuQmCC");
   background-repeat: no-repeat;
   background-position: center right;
   font-size: $font-size;
