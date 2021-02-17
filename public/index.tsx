@@ -83,8 +83,7 @@ const App = () => {
     };
 
     const executeCode = (editor) => {
-      document.querySelector("#stdout").setAttribute('disabled', 'disabled');
-      document.querySelector("#status").innerHTML = "<span class='icon'>i</span> running...";
+      document.querySelector("#stdout").innerHTML = "<div class='status-section'><span class='icon'>i</span> running...</div>";
       document.querySelector("#stderr").innerHTML = "";
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;
@@ -105,7 +104,6 @@ const App = () => {
       })
         .then(r => r.json())
         .then(output => {
-          document.querySelector("#stdout").removeAttribute('disabled');
           document.querySelector("#stdout").innerHTML = htmlEntities(output.stdout);
           document.querySelector("#stderr").innerHTML = htmlEntities(output.stderr);
           testOutput();
