@@ -73,12 +73,10 @@ const App = () => {
       if (expected.length) {
         const actual = document.querySelector("#stdout").innerHTML.trim();
         if (expected === actual) {
-          document.querySelector("#status").innerHTML = "<span style='color: #C3E88D;'><span class='icon success'>✔</span> test passed!</span>";
+          document.querySelector("#stdout").innerHTML += "<div class='status-section'><span style='color: #C3E88D;'><span class='icon success'>✔</span> test passed!</span></div>";
         } else {
-          document.querySelector("#status").innerHTML = "<span style='color: #f07178;'><span class='icon failed'>!</span> test failed! stdout does not matched expected output.</span>";
+          document.querySelector("#stdout").innerHTML += "<div class='status-section'><span style='color: #f07178;'><span class='icon failed'>!</span> test failed!</span></div>";
         }
-      } else {
-        document.querySelector("#status").innerHTML = "<span class='icon'>i</span> press ⌘ + enter or ^ + enter to execute";
       }
     };
 
@@ -153,7 +151,6 @@ const App = () => {
               <header>stderr</header>
               <pre id="stderr"></pre>
             </div>
-            <div id="status" className="status-section"><span className="icon">i</span> press ⌘ + enter or ^ + enter to execute</div>
           </div>
         </div>
       </div>
