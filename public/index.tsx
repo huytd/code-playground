@@ -73,15 +73,15 @@ const App = () => {
       if (expected.length) {
         const actual = document.querySelector("#stdout").innerHTML.trim();
         if (expected === actual) {
-          document.querySelector("#stdout").innerHTML += "<div class='status-section'><span style='color: #C3E88D;'><span class='icon success'>✔</span> test passed!</span></div>";
+          document.querySelector("#stdout").innerHTML += "<div class='status-section success'><span class='icon'>✔</span> test passed!</div>";
         } else {
-          document.querySelector("#stdout").innerHTML += "<div class='status-section'><span style='color: #f07178;'><span class='icon failed'>!</span> test failed!</span></div>";
+          document.querySelector("#stdout").innerHTML += "<div class='status-section failed'><span class='icon'>!</span> test failed!</div>";
         }
       }
     };
 
     const executeCode = (editor) => {
-      document.querySelector("#stdout").innerHTML = "<div class='status-section'><span class='icon'>i</span> running...</div>";
+      document.querySelector("#stdout").innerHTML = "<div class='status-section loading'><span class='icon'>i</span> running...</div>";
       document.querySelector("#stderr").innerHTML = "";
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;

@@ -96,18 +96,14 @@ html, body {
 }
 
 #output .status-section {
-  color: #333;
-  background: #eee;
-  margin: 0 0 3px 3px;
-  padding: 5px 8px;
-  border-radius: 5px;
+  margin: 8px 0;
+  padding: 8px 0;
 }
 
 #output .status-section .icon {
   text-transform: lowercase;
   font-variant: normal;
-  background-color: #333;
-  color: #eee;
+  color: #ffffff;
   border-radius: 50%;
   font-size: 1.0em;
   text-align: center;
@@ -116,12 +112,25 @@ html, body {
   vertical-align: middle;
 }
 
-#output .status-section .icon.success {
-  background-color: #C3E88D;
+#output .status-section.success {
+  color: #2ecc71;
+}
+#output .status-section.success .icon {
+  background-color: #2ecc71;
 }
 
-#output .status-section .icon.failed {
-  background-color: #f07178;
+#output .status-section.failed {
+  color: #e74c3c;
+}
+#output .status-section.failed .icon {
+  background-color: #e74c3c;
+}
+
+#output .status-section.loading {
+  color: #e67e22;
+}
+#output .status-section.loading .icon {
+  background-color: #e67e22;
 }
 
 #stderr {
