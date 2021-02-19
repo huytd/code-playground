@@ -36,8 +36,8 @@ html, body {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: row;
   overflow: hidden;
+  flex-direction: row;
 }
 
 #editor-container {
@@ -176,4 +176,19 @@ select {
   background-repeat: no-repeat;
   background-position: center right;
   font-size: $font-size;
+}
+
+@media only screen and (max-width: 1000px) {
+  .container {
+    flex-direction: column;
+  }
+
+  #output {
+    width: 100%;
+    height: 35%;
+  }
+
+  #output .output-section {
+    margin: 3px 3px 0 0;
+  }
 }
