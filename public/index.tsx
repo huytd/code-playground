@@ -136,14 +136,18 @@ const App = () => {
                   <div className='status-section loading'><span className='icon'>i</span> running...</div>
                 ) : (
                   <>
+                  {executionOutput.stdout && (
                     <div className='output-box out'>
                       <header>stdout</header>
                       <pre>{executionOutput.stdout}</pre>
                     </div>
+                  )}
+                  {executionOutput.stderr && (
                     <div className='output-box err'>
                       <header>stderr</header>
                       <pre>{executionOutput.stderr}</pre>
                     </div>
+                  )}
                   </>
                 )}
               </div>
