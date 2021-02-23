@@ -103,10 +103,10 @@ const App = () => {
         .then(output => {
           document.querySelector("#stdout").innerHTML = "<div class='output-box out'><div class='box-title'><b>stdout</b></div>";
           document.querySelector("#stdout").innerHTML += htmlEntities(output.stdout);
-          document.querySelector("#stdout").innerHTML = "</div>";
-          document.querySelector("#stdout").innerHTML = "<div class='output-box err'><div class='box-title'><b>stderr</b></div>";
+          document.querySelector("#stdout").innerHTML += "</div>";
+          document.querySelector("#stdout").innerHTML += "<div class='output-box err'><div class='box-title'><b>stderr</b></div>";
           document.querySelector("#stdout").innerHTML += htmlEntities(output.stderr);
-          document.querySelector("#stdout").innerHTML = "</div>";
+          document.querySelector("#stdout").innerHTML += "</div>";
           testOutput();
         });
     };
