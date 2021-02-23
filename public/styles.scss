@@ -149,6 +149,13 @@ html, body {
   overflow: auto;
 }
 
+#stdout .output-box {
+  margin: 10px 0;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 5px;
+}
+
 #stdout[disabled] {
   background: #eeeeee;
 }
