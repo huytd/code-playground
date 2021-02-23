@@ -56,10 +56,17 @@ html, body {
 }
 
 #output .col {
-  flex: 1;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+}
+
+#output .col.left {
+  flex: 1;
+}
+
+#output .col.right {
+  width: 30%;
 }
 
 #output .output-section {

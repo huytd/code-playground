@@ -82,7 +82,6 @@ const App = () => {
 
     const executeCode = (editor) => {
       document.querySelector("#stdout").innerHTML = "<div class='status-section loading'><span class='icon'>i</span> running...</div>";
-      document.querySelector("#stderr").innerHTML = "";
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;
       const expected = document.querySelector("#expected-stdout").value;
@@ -102,8 +101,10 @@ const App = () => {
       })
         .then(r => r.json())
         .then(output => {
-          document.querySelector("#stdout").innerHTML = htmlEntities(output.stdout);
-          document.querySelector("#stderr").innerHTML = htmlEntities(output.stderr);
+          document.querySelector("#stdout").innerHTML = "<div><b>stdout</b></div>";
+          document.querySelector("#stdout").innerHTML += htmlEntities(output.stdout);
+          document.querySelector("#stdout").innerHTML += "<div><b>stderr</b></div>";
+          document.querySelector("#stdout").innerHTML += htmlEntities(output.stderr);
           testOutput();
         });
     };
@@ -132,13 +133,13 @@ const App = () => {
           <div id="editor" ref={editorRef}></div>
         </div>
         <div id="output">
-          <div className="col">
+          <div className="col left">
             <div className="output-section">
-              <header>stdout</header>
+              <header>stdout/stderr</header>
               <pre id="stdout"></pre>
             </div>
           </div>
-          <div className="col">
+          <div className="col right">
             <div className="output-section">
               <header>stdin</header>
               <textarea id="stdin"></textarea>
@@ -146,10 +147,6 @@ const App = () => {
             <div className="output-section">
               <header>expected stdout</header>
               <textarea id="expected-stdout"></textarea>
-            </div>
-            <div className="output-section">
-              <header>stderr</header>
-              <pre id="stderr"></pre>
             </div>
           </div>
         </div>
