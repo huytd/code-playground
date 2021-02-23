@@ -27,6 +27,11 @@ const defaultCode = {
 
 const App = () => {
   const editorRef = React.useRef();
+  const [waiting, setWaiting] = React.useState(false);
+  const [executionOutput, setExecutionOutput] = React.useState({
+    stdout: '',
+    stderr: ''
+  });
 
   React.useEffect(() => {
     let language = window.localStorage.getItem('__cpppad-saved-language') || 'cpp';
@@ -48,8 +53,6 @@ const App = () => {
       }
       const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + lang) || defaultCode[lang];
       cm.setValue(savedCode);
-      const expectedOutput = window.localStorage.getItem('__cpppad-saved-expected-' + lang) || '';
-      document.querySelector('#expected-stdout').value = expectedOutput;
       let mode = 'clike';
       switch (lang) {
         case 'cpp': mode = 'clike'; break;
@@ -68,26 +71,12 @@ const App = () => {
       initLanguage($languageSelect.value);
     };
 
-    const testOutput = () => {
-      const expected = document.querySelector("#expected-stdout").value.trim();
-      if (expected.length) {
-        const actual = document.querySelector("#stdout").innerHTML.trim();
-        if (expected === actual) {
-          document.querySelector("#stdout").innerHTML += "<div class='status-section success'><span class='icon'>✔</span> test passed!</div>";
-        } else {
-          document.querySelector("#stdout").innerHTML += "<div class='status-section failed'><span class='icon'>!</span> test failed!</div>";
-        }
-      }
-    };
-
     const executeCode = (editor) => {
-      document.querySelector("#stdout").innerHTML = "<div class='status-section loading'><span class='icon'>i</span> running...</div>";
+      setWaiting(true);
       const code = editor.getValue();
       const stdin = document.querySelector("#stdin").value;
-      const expected = document.querySelector("#expected-stdout").value;
       window.localStorage.setItem('__cpppad-saved-code-' + language, code);
       window.localStorage.setItem('__cpppad-saved-stdin-' + language, stdin);
-      window.localStorage.setItem('__cpppad-saved-expected-' + language, expected);
       fetch('/execute', {
         method: 'POST',
         headers: {
@@ -101,13 +90,18 @@ const App = () => {
       })
         .then(r => r.json())
         .then(output => {
-          document.querySelector("#stdout").innerHTML = "<div class='output-box out'><div class='box-title'><b>stdout</b></div>";
-          document.querySelector("#stdout").innerHTML += htmlEntities(output.stdout);
-          document.querySelector("#stdout").innerHTML += "</div>";
-          document.querySelector("#stdout").innerHTML += "<div class='output-box err'><div class='box-title'><b>stderr</b></div>";
-          document.querySelector("#stdout").innerHTML += htmlEntities(output.stderr);
-          document.querySelector("#stdout").innerHTML += "</div>";
-          testOutput();
+          setWaiting(false);
+          setExecutionOutput({
+            stdout: htmlEntities(output.stdout),
+            stderr: htmlEntities(output.stderr)
+          });
+        })
+        .catch(() => {
+          setWaiting(false);
+          setExecutionOutput({
+            stdout: htmlEntities('No output'),
+            stderr: htmlEntities('Code execution failed')
+          });
         });
     };
 
@@ -137,18 +131,28 @@ const App = () => {
         <div id="output">
           <div className="col left">
             <div className="output-section">
-              <header>stdout/stderr</header>
-              <pre id="stdout"></pre>
+              <div id="stdout">
+                {waiting ? (
+                  <div className='status-section loading'><span className='icon'>i</span> running...</div>
+                ) : (
+                  <>
+                    <div className='output-box out'>
+                      <header>stdout</header>
+                      <pre>{executionOutput.stdout}</pre>
+                    </div>
+                    <div className='output-box err'>
+                      <header>stderr</header>
+                      <pre>{executionOutput.stderr}</pre>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="col right">
             <div className="output-section">
               <header>stdin</header>
               <textarea id="stdin"></textarea>
-            </div>
-            <div className="output-section">
-              <header>expected stdout</header>
-              <textarea id="expected-stdout"></textarea>
             </div>
           </div>
         </div>

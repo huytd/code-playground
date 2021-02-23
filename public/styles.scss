@@ -140,32 +140,20 @@ html, body {
   background-color: #e67e22;
 }
 
-#stderr {
-  color: #f07178;
-  overflow: auto;
-}
-
-#stdout {
-  overflow: auto;
-}
-
 #stdout .output-box {
-  margin: 10px 0;
-  border: 1px solid #eee;
-  border-radius: 3px;
-  padding: 5px;
+  margin-bottom: 10px;
 }
 
-#stdout[disabled] {
-  background: #eeeeee;
+#stdout .output-box pre {
+  overflow: auto;
 }
 
-#stdin, #stdout, #expected-stdout {
+#stdout .output-box.err pre {
+  color: #f07178;
+}
+
+#stdin, #stdout {
   color: #555;
-}
-
-
-#stdin, #stdout, #stderr, #expected-stdout {
   font-size: $font-size;
 }
 
