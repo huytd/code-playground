@@ -92,15 +92,15 @@ const App = () => {
         .then(output => {
           setWaiting(false);
           setExecutionOutput({
-            stdout: htmlEntities(output.stdout),
-            stderr: htmlEntities(output.stderr)
+            stdout: output.stdout,
+            stderr: output.stderr
           });
         })
         .catch(() => {
           setWaiting(false);
           setExecutionOutput({
-            stdout: htmlEntities('No output'),
-            stderr: htmlEntities('Code execution failed')
+            stdout: 'No output',
+            stderr: 'Code execution failed'
           });
         });
     };
@@ -139,13 +139,13 @@ const App = () => {
                   {executionOutput.stdout && (
                     <div className='output-box out'>
                       <header>stdout</header>
-                      <pre>{executionOutput.stdout}</pre>
+                      <pre><code>{executionOutput.stdout}</code></pre>
                     </div>
                   )}
                   {executionOutput.stderr && (
                     <div className='output-box err'>
                       <header>stderr</header>
-                      <pre>{executionOutput.stderr}</pre>
+                      <pre><code>{executionOutput.stderr}</code></pre>
                     </div>
                   )}
                   </>
