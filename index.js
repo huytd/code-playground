@@ -83,6 +83,10 @@ const executeCommandBuilder = (code, stdin, lang, path) => {
       fs.writeFileSync(path + '/main.rs', code);
       cmd = 'rustc main.rs && cat stdin.inp | RUST_BACKTRACE=1 ./main';
       break;
+    case 'go':
+      fs.writeFileSync(path + '/main.go', code);
+      cmd = 'cat stdin.inp | go run main.go';
+      break;
     default:
       break;
   }
@@ -94,7 +98,19 @@ app.post('/execute', async (req, res) => {
     const code = req.body.code;
     const stdin = req.body.stdin;
     const lang = req.body.lang;
-    const image = (lang === 'rust') ? 'rust' : 'node';
+
+    let image;
+    switch (lang) {
+      case 'rust':
+        image = 'rust';
+        break;
+      case 'go':
+        image = 'golang';
+        break;
+      default:
+        image = 'node';
+        break;
+    }
 
     const session = `${root}/${Date.now().toPrecision(21)}`;
     if (!fs.existsSync(`./${session}`)) {

@@ -8,6 +8,7 @@ import 'codemirror/theme/xq-light.css';
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
+import 'codemirror/mode/go/go.js';
 import 'codemirror/mode/rust/rust.js';
 import 'codemirror/keymap/vim.js';
 
@@ -23,6 +24,7 @@ const defaultCode = {
   'python': '',
   'node': 'process.stdin.resume();\nprocess.stdin.setEncoding("utf-8");\nvar stdin_input = "";\n\nprocess.stdin.on("data", function (input) {\n    stdin_input += input;\n});\n\nprocess.stdin.on("end", function () {\n   main(stdin_input);\n});\n\nfunction main(input) {\n    process.stdout.write("Hi, " + input + ".");\n}',
   'rust': 'fn main() {\n\n}',
+  'go': 'package main\n\nfunc main() {\n\n}',
 };
 
 const App = () => {
@@ -59,6 +61,7 @@ const App = () => {
         case 'node': mode = 'javascript'; break;
         case 'python': mode = 'python'; break;
         case 'rust': mode = 'rust'; break;
+        case 'go': mode = 'go'; break;
       }
       cm.setOption('mode', mode);
     };
@@ -122,6 +125,7 @@ const App = () => {
           <option value="python">Python</option>
           <option value="node">JavaScript</option>
           <option value="rust">Rust</option>
+          <option value="go">Go</option>
         </select>
       </div>
       <div className="container">
