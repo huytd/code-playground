@@ -32,6 +32,10 @@ html, body {
   font-size: $font-size;
 }
 
+#editor .CodeMirror-linenumber {
+  white-space: pre;
+}
+
 .container {
   width: 100%;
   height: 100%;

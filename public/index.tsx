@@ -19,13 +19,38 @@ const htmlEntities = (str) => {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 };
 
-const defaultCode = {
-  'cpp': '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello World";\n}',
-  'python': '',
-  'node': 'process.stdin.resume();\nprocess.stdin.setEncoding("utf-8");\nvar stdin_input = "";\n\nprocess.stdin.on("data", function (input) {\n    stdin_input += input;\n});\n\nprocess.stdin.on("end", function () {\n   main(stdin_input);\n});\n\nfunction main(input) {\n    process.stdout.write("Hi, " + input + ".");\n}',
-  'rust': 'fn main() {\n\n}',
-  'go': 'package main\n\nfunc main() {\n\n}',
-};
+const supportedLanguages = [
+  {
+    name: 'C++',
+    cmMode: 'clike',
+    lang: 'cpp',
+    template: '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello World";\n}',
+  },
+  {
+    name: 'Rust',
+    cmMode: 'rust',
+    lang: 'rust',
+    template: 'fn main() {\n\n}',
+  },
+  {
+    name: 'JavaScript',
+    cmMode: 'javascript',
+    lang: 'node',
+    template: 'process.stdin.resume();\nprocess.stdin.setEncoding("utf-8");\nvar stdin_input = "";\n\nprocess.stdin.on("data", function (input) {\n    stdin_input += input;\n});\n\nprocess.stdin.on("end", function () {\n   main(stdin_input);\n});\n\nfunction main(input) {\n    process.stdout.write("Hi, " + input + ".");\n}',
+  },
+  {
+    name: 'Go',
+    cmMode: 'go',
+    lang: 'go',
+    template: 'package main\n\nfunc main() {\n\n}',
+  },
+  {
+    name: 'Python',
+    cmMode: 'python',
+    lang: 'python',
+    template: ''
+  }
+];
 
 const App = () => {
   const editorRef = React.useRef();
@@ -39,31 +64,36 @@ const App = () => {
     let language = window.localStorage.getItem('__cpppad-saved-language') || 'cpp';
 
     const cm = CodeMirror(editorRef.current, {
-      mode: 'clike',
+      mode: supportedLanguages[0].cmMode,
       lineNumbers: true,
       keyMap: 'vim',
       theme: 'xq-light',
       showCursorWhenSelecting: true
     });
 
+    // Relative number
+    function showRelativeLines(cm) {
+      const lineNum = cm.getCursor().line + 1;
+      if (cm.state.curLineNum === lineNum) {
+        return;
+      }
+      cm.state.curLineNum = lineNum;
+      cm.setOption('lineNumberFormatter', l =>
+        l === lineNum ? (lineNum + '').padEnd(3, ' ') : (Math.abs(lineNum - l) + '').padStart(3, ' '));
+    }
+    cm.on('cursorActivity', showRelativeLines);
+
     const initLanguage = lang => {
+      const found = supportedLanguages.find(l => l.lang === lang);
       language = lang;
-      window.localStorage.setItem('__cpppad-saved-language', lang);
-      const savedStdin = window.localStorage.getItem('__cpppad-saved-stdin-' + lang);
+      window.localStorage.setItem('__cpppad-saved-language', found.lang);
+      const savedStdin = window.localStorage.getItem('__cpppad-saved-stdin-' + found.lang);
       if (savedStdin) {
         document.querySelector("#stdin").value = savedStdin;
       }
-      const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + lang) || defaultCode[lang];
+      const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + found.lang) || found.template;
       cm.setValue(savedCode);
-      let mode = 'clike';
-      switch (lang) {
-        case 'cpp': mode = 'clike'; break;
-        case 'node': mode = 'javascript'; break;
-        case 'python': mode = 'python'; break;
-        case 'rust': mode = 'rust'; break;
-        case 'go': mode = 'go'; break;
-      }
-      cm.setOption('mode', mode);
+      cm.setOption('mode', found.cmMode);
     };
 
     initLanguage(language);
@@ -121,11 +151,7 @@ const App = () => {
     <>
       <div className="header">
         language: <select id="language-select">
-          <option value="cpp">C++</option>
-          <option value="python">Python</option>
-          <option value="node">JavaScript</option>
-          <option value="rust">Rust</option>
-          <option value="go">Go</option>
+          {supportedLanguages.map(({ lang, name }) => <option value={lang}>{name}</option>)}
         </select>
       </div>
       <div className="container">
