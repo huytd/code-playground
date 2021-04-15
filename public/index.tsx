@@ -15,10 +15,6 @@ import 'codemirror/keymap/vim.js';
 // Config Vim key binding
 CodeMirror.Vim.map("jk", "<Esc>", "insert")
 
-const htmlEntities = (str) => {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-};
-
 const supportedLanguages = [
   {
     name: 'C++',
@@ -72,16 +68,16 @@ const App = () => {
     });
 
     // Relative number
-    function showRelativeLines(cm) {
-      const lineNum = cm.getCursor().line + 1;
-      if (cm.state.curLineNum === lineNum) {
-        return;
-      }
-      cm.state.curLineNum = lineNum;
-      cm.setOption('lineNumberFormatter', l =>
-        l === lineNum ? (lineNum + '').padEnd(3, ' ') : (Math.abs(lineNum - l) + '').padStart(3, ' '));
-    }
-    cm.on('cursorActivity', showRelativeLines);
+    // function showRelativeLines(cm) {
+      // const lineNum = cm.getCursor().line + 1;
+      // if (cm.state.curLineNum === lineNum) {
+        // return;
+      // }
+      // cm.state.curLineNum = lineNum;
+      // cm.setOption('lineNumberFormatter', l =>
+        // l === lineNum ? (lineNum + '').padEnd(3, ' ') : (Math.abs(lineNum - l) + '').padStart(3, ' '));
+    // }
+    // cm.on('cursorActivity', showRelativeLines);
 
     const initLanguage = lang => {
       const found = supportedLanguages.find(l => l.lang === lang);
