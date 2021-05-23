@@ -32,7 +32,7 @@ const supportedLanguages = [
     name: 'JavaScript',
     cmMode: 'javascript',
     lang: 'node',
-    template: 'process.stdin.resume();\nprocess.stdin.setEncoding("utf-8");\nvar stdin_input = "";\n\nprocess.stdin.on("data", function (input) {\n    stdin_input += input;\n});\n\nprocess.stdin.on("end", function () {\n   main(stdin_input);\n});\n\nfunction main(input) {\n    process.stdout.write("Hi, " + input + ".");\n}',
+    template: 'console.log("Hello, World")',
   },
   {
     name: 'Go',
@@ -72,10 +72,6 @@ const App = () => {
       const found = supportedLanguages.find(l => l.lang === lang);
       language = lang;
       window.localStorage.setItem('__cpppad-saved-language', found.lang);
-      const savedStdin = window.localStorage.getItem('__cpppad-saved-stdin-' + found.lang);
-      if (savedStdin) {
-        document.querySelector("#stdin").value = savedStdin;
-      }
       const savedCode = window.localStorage.getItem('__cpppad-saved-code-' + found.lang) || found.template;
       cm.setValue(savedCode);
       cm.setOption('mode', found.cmMode);
@@ -92,16 +88,13 @@ const App = () => {
     const executeCode = (editor) => {
       setWaiting(true);
       const code = editor.getValue();
-      const stdin = document.querySelector("#stdin").value;
       window.localStorage.setItem('__cpppad-saved-code-' + language, code);
-      window.localStorage.setItem('__cpppad-saved-stdin-' + language, stdin);
       fetch('/execute', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          stdin: stdin,
           code: code,
           lang: language
         })
