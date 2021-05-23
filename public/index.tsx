@@ -4,7 +4,7 @@ import './styles.scss';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
+import 'codemirror/theme/material-darker.css';
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
@@ -63,7 +63,7 @@ const App = () => {
       mode: supportedLanguages[0].cmMode,
       lineNumbers: true,
       keyMap: 'vim',
-      theme: 'material',
+      theme: 'material-darker',
       cursorBlinkRate: 0,
       showCursorWhenSelecting: true
     });
@@ -144,7 +144,7 @@ const App = () => {
           <div id="editor" ref={editorRef}></div>
         </div>
         <div id="output">
-          <div className="col left">
+          <div className="col">
             <div className="output-section">
               <div id="stdout">
                 {waiting ? (
@@ -168,12 +168,6 @@ const App = () => {
               </div>
             </div>
           </div>
-          // <div className="col right">
-            // <div className="output-section">
-              // <header>stdin</header>
-              // <textarea id="stdin"></textarea>
-            // </div>
-          // </div>
         </div>
       </div>
     </>
