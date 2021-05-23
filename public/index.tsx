@@ -4,7 +4,7 @@ import './styles.scss';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/xq-light.css';
+import 'codemirror/theme/material.css';
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
@@ -63,21 +63,10 @@ const App = () => {
       mode: supportedLanguages[0].cmMode,
       lineNumbers: true,
       keyMap: 'vim',
-      theme: 'xq-light',
+      theme: 'material',
+      cursorBlinkRate: 0,
       showCursorWhenSelecting: true
     });
-
-    // Relative number
-    // function showRelativeLines(cm) {
-      // const lineNum = cm.getCursor().line + 1;
-      // if (cm.state.curLineNum === lineNum) {
-        // return;
-      // }
-      // cm.state.curLineNum = lineNum;
-      // cm.setOption('lineNumberFormatter', l =>
-        // l === lineNum ? (lineNum + '').padEnd(3, ' ') : (Math.abs(lineNum - l) + '').padStart(3, ' '));
-    // }
-    // cm.on('cursorActivity', showRelativeLines);
 
     const initLanguage = lang => {
       const found = supportedLanguages.find(l => l.lang === lang);
@@ -179,12 +168,12 @@ const App = () => {
               </div>
             </div>
           </div>
-          <div className="col right">
-            <div className="output-section">
-              <header>stdin</header>
-              <textarea id="stdin"></textarea>
-            </div>
-          </div>
+          // <div className="col right">
+            // <div className="output-section">
+              // <header>stdin</header>
+              // <textarea id="stdin"></textarea>
+            // </div>
+          // </div>
         </div>
       </div>
     </>
