@@ -95,6 +95,7 @@ const App = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          stdin: '',
           code: code,
           lang: language
         })

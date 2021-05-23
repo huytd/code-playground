@@ -148,13 +148,9 @@ html, body {
   color: #f07178;
 }
 
-#stdin, #stdout {
-  color: #555;
+#stdout {
+  color: #fff;
   font-size: $font-size;
-}
-
-details summary {
-  color: #626887;
 }
 
 .header {
