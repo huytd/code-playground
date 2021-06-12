@@ -159,10 +159,11 @@ const useFileSystem = (id) => {
         });
   };
 
-  const write = (index, name, content) => {
+  const write = (name, content) => {
     const files = fileSystem.files;
+    const index = fileIndex(name);
     let writtenIndex = index;
-    if (files[index]) {
+    if (index !== -1) {
       // edit file
       files[index] = { name, content, language };
     } else {
@@ -186,18 +187,29 @@ const useFileSystem = (id) => {
 
   const currentIndex = () => {
     return fileSystem.currentFileIndex;
-  }
+  };
+
+  const deleteFile = (name) => {
+    const files = fileSystem.files.filter(file => file.name !== name);
+    setFileSystem({
+      ...fileSystem,
+      files: files
+    });
+  };
 
   fs?.current = {
-    all, getCurrent, get, new: newFile, rename, write, setCurrentIndex, findIndex, currentIndex, language, setLanguage
+    all, getCurrent, get, new: newFile, rename, write,
+    setCurrentIndex, findIndex, currentIndex, language,
+    setLanguage, delete: deleteFile
   };
 
   return fs;
 };
 
-const FileItem = ({ index, selected, fileName, onRename }) => {
+const FileItem = ({ index, selected, fileName, onRename, onDelete }) => {
   const contentRef = React.useRef();
   const [editMode, setEditMode] = React.useState(false);
+  const [deleteMode, setDeleteMode] = React.useState(false);
   const keyPressHandler = (e) => {
     if (e.key === "Enter") {
       setEditMode(false);
@@ -214,15 +226,34 @@ const FileItem = ({ index, selected, fileName, onRename }) => {
     }, 0);
   };
 
-  return (
-    <a
+  const deleteFileHandler = () => {
+    setDeleteMode(false);
+    if (onDelete) {
+      onDelete(fileName);
+    }
+  };
+
+  return !deleteMode ? (
+    <div
       className={`file-entry ${selected && "active"}`}
-      href={`#file=${fileName}`}
-      ref={contentRef}
-      contentEditable={editMode}
-      onDoubleClick={doubleClickHandler}
-      onKeyPress={keyPressHandler}
-    >{fileName}</a>
+    >
+      <a
+        href={`#file=${fileName}`}
+        ref={contentRef}
+        contentEditable={editMode}
+        onDoubleClick={doubleClickHandler}
+        onKeyPress={keyPressHandler}
+      >{fileName}</a>
+      <button onClick={() => setDeleteMode(true)}>del</button>
+    </div>
+  ) : (
+    <div
+      className={`file-entry delete-mode`}
+    >
+      <div>delete {fileName}?</div>
+      <button onClick={deleteFileHandler}>yes</button>
+      <button onClick={() => setDeleteMode(false)}>no</button>
+    </div>
   );
 };
 
@@ -285,8 +316,7 @@ const App = () => {
       fn: (editor, { args = [] }) => {
         const fileName = args[0] || FileManager.current.getCurrent()?.name;
         if (fileName) {
-          const index = FileManager.current.findIndex(fileName);
-          FileManager.current.write(index, fileName, editor.getValue());
+          FileManager.current.write(fileName, editor.getValue());
         } else {
           editor.openNotification(
             "Please specify a valid file name to write",
@@ -296,7 +326,7 @@ const App = () => {
             }
           );
         }
-      },
+      }
     }
   ]);
 
@@ -357,6 +387,7 @@ const App = () => {
               selected={index === FileManager.current.currentIndex()}
               fileName={file.name}
               onRename={FileManager?.current.rename}
+              onDelete={FileManager?.current.delete}
             />
           ))}
         </div>

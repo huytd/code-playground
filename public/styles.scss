@@ -51,17 +51,39 @@ button {
   }
 
   .file-entry {
-    display: block;
-    text-decoration: none;
-    color: #cccccc;
-    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+
+    a {
+      text-decoration: none;
+      color: #cccccc;
+      flex: 1;
+      padding: 8px 12px;
+    }
+
+    button {
+      font-variant: small-caps;
+      visibility: hidden;
+    }
 
     &:hover {
       background: #333333;
+
+      button {
+        visibility: visible;
+      }
     }
 
     &.active {
       background: #323232;
+    }
+
+    &.delete-mode {
+      background: #F00;
+      color: #FFF;
+      div {
+        flex: 1;
+      }
     }
   }
 }
