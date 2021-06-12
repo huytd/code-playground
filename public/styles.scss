@@ -18,11 +18,52 @@ html, body {
   font-size: $font-size;
 }
 
+button {
+  background: #363636;
+  border: 1px solid #222222;
+  color: #ffffff;
+  padding: 8px 18px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: inset 0px 3px 5px -5px rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+
+  &:hover {
+    background: #404040;
+  }
+}
+
 #root {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+#file-tree {
+  width: 20%;
+  background: #242424;
+
+  .file-controller {
+    padding: 10px;
+    border-bottom: 1px solid #424242;
+    display: flex;
+  }
+
+  .file-entry {
+    display: block;
+    text-decoration: none;
+    color: #cccccc;
+    padding: 10px 15px;
+
+    &:hover {
+      background: #333333;
+    }
+
+    &.active {
+      background: #323232;
+    }
+  }
 }
 
 #editor, #editor .CodeMirror {
@@ -164,12 +205,18 @@ select {
   background: #333333;
   border: 1px solid #222222;
   color: #ffffff;
-  padding: 3px 30px 3px 5px;
+  padding: 5px 30px 5px 5px;
   position: relative;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAS0lEQVQ4jWNgGAWjYPACZgYGhh4GBoY1OHAnVA1JQIGBgeEBAwPDfzR8h4GBQZZcl6IbeoeBgUGGXMPQDb1NDcNgQJ6aho2CUYAGACiuEUHnKCPJAAAAAElFTkSuQmCC");
   background-repeat: no-repeat;
   background-position: center right;
   font-size: $font-size;
+  box-shadow: inset 0px 3px 5px -5px rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+
+  &:hover {
+    background-color: #383838;
+  }
 }
 
 @media only screen and (max-width: 1000px) {
@@ -184,5 +231,9 @@ select {
 
   #output .output-section {
     margin: 3px 3px 0 0;
+  }
+
+  #file-tree {
+    display: none;
   }
 }
