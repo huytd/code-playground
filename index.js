@@ -63,29 +63,28 @@ const runInDocker = (docker, image, command, options) => new Promise(async (reso
   }
 });
 
-const executeCommandBuilder = (code, stdin, lang, path) => {
+const executeCommandBuilder = (code, lang, path) => {
   let cmd = '';
-  fs.writeFileSync(path + '/stdin.inp', stdin);
   switch (lang) {
     case 'cpp':
       fs.writeFileSync(path + '/main.cpp', code);
-      cmd = 'g++ main.cpp -std=c++11 -o maincpp && cat stdin.inp | ./maincpp';
+      cmd = 'g++ main.cpp -std=c++11 -o maincpp && ./maincpp';
       break;
     case 'python':
       fs.writeFileSync(path + '/main.py', code);
-      cmd = 'cat stdin.inp | python main.py';
+      cmd = 'python main.py';
       break;
     case 'node':
       fs.writeFileSync(path + '/main.js', code);
-      cmd = 'cat stdin.inp | node main.js';
+      cmd = 'node main.js';
       break;
     case 'rust':
       fs.writeFileSync(path + '/main.rs', code);
-      cmd = 'rustc main.rs && cat stdin.inp | RUST_BACKTRACE=1 ./main';
+      cmd = 'rustc main.rs && RUST_BACKTRACE=1 ./main';
       break;
     case 'go':
       fs.writeFileSync(path + '/main.go', code);
-      cmd = 'cat stdin.inp | go run main.go';
+      cmd = 'go run main.go';
       break;
     default:
       break;
@@ -96,7 +95,6 @@ const executeCommandBuilder = (code, stdin, lang, path) => {
 app.post('/execute', async (req, res) => {
   try {
     const code = req.body.code;
-    const stdin = req.body.stdin;
     const lang = req.body.lang;
 
     let image;
@@ -117,7 +115,7 @@ app.post('/execute', async (req, res) => {
       fs.mkdirSync(`./${session}`);
     }
 
-    let cmd = executeCommandBuilder(code, stdin, lang, `./${session}`);
+    let cmd = executeCommandBuilder(code, lang, `./${session}`);
     let result = await runInDocker(docker, image, ["/bin/bash", "-c", cmd], {
       'HostConfig': {
         'Binds': [`${path.join(__dirname + "/" + session)}:/usr/app/src`]
