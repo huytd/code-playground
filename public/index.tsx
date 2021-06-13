@@ -11,6 +11,7 @@ import 'codemirror/mode/python/python.js';
 import 'codemirror/mode/go/go.js';
 import 'codemirror/mode/rust/rust.js';
 import 'codemirror/keymap/vim.js';
+import 'codemirror/keymap/sublime.js';
 import 'codemirror/addon/dialog/dialog.js';
 import 'codemirror/addon/dialog/dialog.css';
 
@@ -343,7 +344,7 @@ const App = () => {
   }, [FileManager.current.language]);
 
   const locationHashChangeHandler = () => {
-    const { hash } = window.location;
+    const { hash, search } = window.location;
     const fileName = hash.match(/#file=(.*)/)?.pop();
     const index = FileManager.current.findIndex(fileName);
     FileManager.current.setCurrentIndex(index);
@@ -351,6 +352,10 @@ const App = () => {
       const { content, language } = FileManager.current.get(index);
       codeEditor?.current?.setValue(content);
       FileManager.current.setLanguage(language);
+    }
+    if (search.match(/(novim|default)/)) {
+      console.log("Disable vim mode");
+      codeEditor?.current?.setOption('keyMap', 'sublime');
     }
   };
 
@@ -365,21 +370,24 @@ const App = () => {
   return (
     <>
       <div className="header">
-        language:&nbsp;
-        <select
-          id="language-select"
-          ref={languageRef}
-          onChange={languageChangeHandler}
-          value={FileManager.current.language}
-        >
-          {supportedLanguages.map(({ lang, name }) => <option key={lang} value={lang}>{name}</option>)}
-        </select>
+        <button onClick={FileManager?.current.new}>New File</button>
+        <div className="spacer"></div>
+        <div className="language-selector">
+          language:&nbsp;
+          <select
+            id="language-select"
+            ref={languageRef}
+            onChange={languageChangeHandler}
+            value={FileManager.current.language}
+            >
+            {supportedLanguages.map(({ lang, name }) => <option key={lang} value={lang}>{name}</option>)}
+          </select>
+        </div>
+        <div className="flex-spacer"></div>
+        <button className="primary" onClick={executeCode.bind(null, codeEditor?.current)}>Execute</button>
       </div>
       <div className="container">
         <div id="file-tree">
-          <div className="file-controller">
-            <button onClick={FileManager?.current.new}>New File</button>
-          </div>
           {FileManager.current.all().map((file, index) => (
             <FileItem
               key={index}

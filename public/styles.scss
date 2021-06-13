@@ -18,6 +18,14 @@ html, body {
   font-size: $font-size;
 }
 
+.flex-spacer {
+  flex: 1;
+}
+
+.spacer {
+  width: 10px;
+}
+
 button {
   background: #363636;
   border: 1px solid #222222;
@@ -31,6 +39,14 @@ button {
   &:hover {
     background: #404040;
   }
+
+  &.primary {
+    background: #0984e3;
+
+    &:hover {
+      background: #74b9ff;
+    }
+  }
 }
 
 #root {
@@ -43,12 +59,6 @@ button {
 #file-tree {
   width: 20%;
   background: #242424;
-
-  .file-controller {
-    padding: 10px;
-    border-bottom: 1px solid #424242;
-    display: flex;
-  }
 
   .file-entry {
     display: flex;
@@ -218,6 +228,7 @@ button {
 
 .header {
   padding: 10px 15px;
+  display: flex;
 }
 
 select {
