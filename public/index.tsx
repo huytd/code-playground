@@ -161,7 +161,7 @@ const useFileSystem = (id) => {
 
   const write = (name, content) => {
     const files = fileSystem.files;
-    const index = fileIndex(name);
+    const index = findIndex(name);
     let writtenIndex = index;
     if (index !== -1) {
       // edit file
