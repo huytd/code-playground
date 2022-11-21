@@ -55,11 +55,15 @@ const runInDocker = (docker, image, command, options) => new Promise(async (reso
     });
 
     await container.start();
-    await container.stop();
+    try {
+      await container.stop();
+    } catch (e) {
+      console.error('Container already stopped')
+    }
     await container.remove();
     resolve(output);
   } catch(error) {
-    throw error;
+    reject(error);
   }
 });
 
@@ -86,6 +90,10 @@ const executeCommandBuilder = (code, lang, path) => {
       fs.writeFileSync(path + '/main.go', code);
       cmd = 'go run main.go';
       break;
+    case 'zig':
+      fs.writeFileSync(path + '/main.zig', code);
+      cmd = 'zig run main.zig';
+      break;
     default:
       break;
   }
@@ -105,6 +113,9 @@ app.post('/execute', async (req, res) => {
       case 'go':
         image = 'golang';
         break;
+      case 'zig':
+        image = 'protocall7/zig:0.10.0';
+        break;
       default:
         image = 'node';
         break;
@@ -116,7 +127,7 @@ app.post('/execute', async (req, res) => {
     }
 
     let cmd = executeCommandBuilder(code, lang, `./${session}`);
-    let result = await runInDocker(docker, image, ["/bin/bash", "-c", cmd], {
+    let result = await runInDocker(docker, image, ["/bin/sh", "-c", cmd], {
       'HostConfig': {
         'Binds': [`${path.join(__dirname + "/" + session)}:/usr/app/src`]
       },
@@ -128,7 +139,11 @@ app.post('/execute', async (req, res) => {
     res.json(result);
   } catch(err) {
     console.log("ERROR", err);
-    res.json({ error: true });
+    res.json({ 
+      error: true,
+      stdout: 'No output',
+      stderr: err.message
+    });
   }
 });
 

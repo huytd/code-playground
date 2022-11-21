@@ -41,6 +41,12 @@ const supportedLanguages = [
     template: 'package main\n\nfunc main() {\n\n}',
   },
   {
+    name: 'Zig',
+    cmMode: 'rust',
+    lang: 'zig',
+    template: 'pub fn main() void {\n\n}'
+  },
+  {
     name: 'Python',
     cmMode: 'python',
     lang: 'python',
@@ -125,6 +131,11 @@ const useFileSystem = (id) => {
         name: 'demo-02.rs',
         content: 'fn main() {\n  println!("OK This is a test");\n}',
         language: 'rust'
+      },
+      {
+        name: 'demo-03.zig',
+        content: 'const std = @import("std");\n\npub fn main() void {\n\tstd.debug.print("The Answer for Everything is {}", .{42});\n}',
+        language: 'zig',
       },
     ]
   });
